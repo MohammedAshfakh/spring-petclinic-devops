@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         AWS_REGION = "us-east-1"
-        ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/gitops-app"
+        ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/petclinic"
         SONAR_HOST_URL = "http://54.167.64.99:9000"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
