@@ -75,38 +75,47 @@ pipeline {
             }
         }
 
-        stage('Debug') {
+        stage('Clone GitOps Repository') {
             steps {
-                sh 'pwd'
-                sh 'ls -R'
+                dir('petclinic-CD') {
+                    git branch: "${GITOPS_BRANCH}",
+                        url: "${GITOPS_REPO}"
+                }
             }
         }
 
-        stage('Update Helm values (GitOps CD)') {
+        stage('Update Helm values.yaml') {
             steps {
-                sh """
-                sed -i 's/tag: .*/tag: ${IMAGE_TAG}/' helm/petclinic/values.yaml
-                """
-            }
-        }
-
-        stage('Commit & Push to Git (Trigger Argo CD)') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'github-creds',
-                    usernameVariable: 'GIT_USER',
-                    passwordVariable: 'GIT_PASS'
-                )]) {
-
+                dir('petclinic-CD') {
                     sh """
-                    git config user.email "mohammedashfakhshaik@gmail.com"
-                    git config user.name "MohammedAshfakh"
-
-                    git add helm/petclinic/values.yaml
-                    git commit -m "Update image tag to ${IMAGE_TAG}" || echo "No changes to commit"
-
-                    git push https://${GIT_USER}:${GIT_PASS}@github.com/MohammedAshfakh/petclinic-CD.git main
+                    sed -i 's/tag:.*/tag: ${IMAGE_TAG}/' helm/petclinic/values.yaml
+                    cat helm/petclinic/values.yaml
                     """
+                }
+            }
+        }
+
+        stage('Commit & Push GitOps Changes') {
+            steps {
+                dir('petclinic-CD') {
+
+                    withCredentials([usernamePassword(
+                        credentialsId: 'github-creds',
+                        usernameVariable: 'GIT_USER',
+                        passwordVariable: 'GIT_TOKEN'
+                    )]) {
+
+                        sh """
+                        git config user.email "mohammedashfakhshaik@gmail.com"
+                        git config user.name "MohammedAshfakh"
+
+                        git add .
+
+                        git commit -m "Update image tag to ${IMAGE_TAG}" || true
+
+                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/MohammedAshfakh/petclinic-CD.git HEAD:main
+                        """
+                    }
                 }
             }
         }
