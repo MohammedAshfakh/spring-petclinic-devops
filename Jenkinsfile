@@ -115,7 +115,6 @@ pipeline {
         }
     }
 
-
     post {
         success {
             echo "✅ Build, Test, Sonar, Docker, Push SUCCESS"
