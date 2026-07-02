@@ -8,8 +8,6 @@ pipeline {
         ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/petclinic"
         SONAR_HOST_URL = "http://34.232.48.252:9000"
         IMAGE_TAG = "${BUILD_NUMBER}"
-        GIT_REPO="https://www.github.com/MohammedAshfakh/petclinic-CD.git"
-        GIT_BRANCH="main"
     }
 
 
@@ -78,8 +76,8 @@ pipeline {
         stage('Clone GitOps Repository') {
             steps {
                 dir('petclinic-CD') {
-                    git branch: "${GITOPS_BRANCH}",
-                        url: "${GITOPS_REPO}"
+                    git branch: 'main',
+                        url: 'https://www.github.com/MohammedAshfakh/petclinic-CD.git'
                 }
             }
         }
