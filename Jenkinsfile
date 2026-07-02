@@ -8,8 +8,8 @@ pipeline {
         ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/petclinic"
         SONAR_HOST_URL = "http://34.232.48.252:9000"
         IMAGE_TAG = "${BUILD_NUMBER}"
-	GIT_REPO="https://www.github.com/MohammedAshfakh/petclinic-CD.git"
-	GIT_BRANCH="main"
+        GIT_REPO="https://www.github.com/MohammedAshfakh/petclinic-CD.git"
+        GIT_BRANCH="main"
     }
 
 
@@ -29,7 +29,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                
+
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                     sh """
                     mvn sonar:sonar \
@@ -38,7 +38,7 @@ pipeline {
                         -Dsonar.login=$SONAR_TOKEN
                     """
                 }
-                
+
             }
         }
 
@@ -55,8 +55,8 @@ pipeline {
         stage('Push to ECR') {
             steps {
                 withCredentials([
-		    [$class: 'AmazonWebServicesCredentialsBinding',
-             	    credentialsId: 'aws-creds']
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds']
                 ]) {
                     sh """
                     aws ecr get-login-password --region $AWS_REGION \
@@ -68,8 +68,8 @@ pipeline {
                 }
             }
         }
-	
-	stage('Update Helm values (GitOps CD)') {
+
+        stage('Update Helm values (GitOps CD)') {
             steps {
                 sh """
                 sed -i 's/tag: .*/tag: ${IMAGE_TAG}/' helm/petclinic/values.yaml
@@ -94,12 +94,12 @@ pipeline {
 
                     git push https://${GIT_USER}:${GIT_PASS}@github.com/MohammedAshfakh/petclinic-CD.git main
                     """
-                    }
                 }
             }
         }
-
     }
+
+}
 
 
     post {
@@ -112,3 +112,4 @@ pipeline {
         }
     }
 }
+
