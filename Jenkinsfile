@@ -8,6 +8,8 @@ pipeline {
         ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/petclinic"
         SONAR_HOST_URL = "http://34.232.48.252:9000"
         IMAGE_TAG = "${BUILD_NUMBER}"
+	GIT_REPO="https://www.github.com/MohammedAshfakh/petclinic-CD.git"
+	GIT_BRANCH="main"
     }
 
     stages {
@@ -65,7 +67,39 @@ pipeline {
                 }
             }
         }
+	
+	stage('Update Helm values (GitOps CD)') {
+            steps {
+                sh """
+                sed -i 's/tag: .*/tag: ${IMAGE_TAG}/' helm/petclinic/values.yaml
+                """
+            }
+        }
+
+        stage('Commit & Push to Git (Trigger Argo CD)') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github-creds',
+                    usernameVariable: 'GIT_USER',
+                    passwordVariable: 'GIT_PASS'
+                )]) {
+
+                    sh """
+                    git config user.email "jenkins@devops.com"
+                    git config user.name "jenkins"
+
+                    git add helm/petclinic/values.yaml
+                    git commit -m "Update image tag to ${IMAGE_TAG}" || echo "No changes to commit"
+
+                    git push https://${GIT_USER}:${GIT_PASS}@github.com/MohammedAshfakh/petclinic-CD.git main
+                    """
+                    }
+                }
+            }
+        }
+
     }
+
 
     post {
         success {
