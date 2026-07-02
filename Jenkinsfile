@@ -23,10 +23,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                checkout([$class: 'GitSCM',
-                branches: [[name: 'main']],
-                userRemoteConfigs: [[url: 'https://github.com/MohammedAshfakh/petclinic-CD.git']]
-                ])
+                checkout scm
             }
         }
 
@@ -102,8 +99,8 @@ pipeline {
                 )]) {
 
                     sh """
-                    git config user.email "jenkins@devops.com"
-                    git config user.name "jenkins"
+                    git config user.email "mohammedashfakhshaik@gmail.com"
+                    git config user.name "MohammedAshfakh"
 
                     git add helm/petclinic/values.yaml
                     git commit -m "Update image tag to ${IMAGE_TAG}" || echo "No changes to commit"
@@ -114,6 +111,7 @@ pipeline {
             }
         }
     }
+
 
     post {
         success {
