@@ -30,7 +30,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                     sh """
                     mvn sonar:sonar \
-                        -Dsonar.projectKey=employee-api \
+                        -Dsonar.projectKey=petclinic \
                         -Dsonar.host.url=$SONAR_HOST_URL \
                         -Dsonar.login=$SONAR_TOKEN
                     """
@@ -42,9 +42,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh """
-                docker build -t employee-api:${IMAGE_TAG} .
-                docker tag employee-api:${IMAGE_TAG} ${ECR_URI}:${IMAGE_TAG}
-                docker tag employee-api:${IMAGE_TAG} ${ECR_URI}:latest
+                docker build -t petclinic:${IMAGE_TAG} .
+                docker tag petclinic:${IMAGE_TAG} ${ECR_URI}:${IMAGE_TAG}
+                docker tag petclinic:${IMAGE_TAG} ${ECR_URI}:latest
                 """
             }
         }
