@@ -15,9 +15,18 @@ pipeline {
 
     stages {
 
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
         stage('Checkout Code') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM',
+                branches: [[name: 'main']],
+                userRemoteConfigs: [[url: 'https://github.com/MohammedAshfakh/petclinic-CD.git']]
+                ])
             }
         }
 
@@ -66,6 +75,13 @@ pipeline {
                     docker push ${ECR_URI}:latest
                     """
                 }
+            }
+        }
+
+        stage('Debug') {
+            steps {
+                sh 'pwd'
+                sh 'ls -R'
             }
         }
 
