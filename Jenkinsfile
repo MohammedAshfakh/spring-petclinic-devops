@@ -64,7 +64,7 @@ pipeline {
                 ]) {
                     sh """
                     aws ecr get-login-password --region $AWS_REGION \
-                    | docker login --username AWS --password-stdin 799517508141.dkr.ecr.us-east-1.amazonaws.com
+                    | docker login --username AWS --password-stdin 799517508141.dkr.ecr.us-east-1.amazonaws.com/gitops-app
 
                     docker push ${ECR_URI}:${IMAGE_TAG}
                     docker push ${ECR_URI}:latest
