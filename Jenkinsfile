@@ -92,8 +92,7 @@ pipeline {
                 }
             }
         }
-
-        stage('Commit & Push GitOps Changes') {
+                stage('Commit & Push GitOps Changes') {
             steps {
                 dir('petclinic-CD') {
 
@@ -103,20 +102,22 @@ pipeline {
                         passwordVariable: 'GIT_TOKEN'
                     )]) {
 
-                        sh """
+                        sh '''
                         git config user.email "mohammedashfakhshaik@gmail.com"
                         git config user.name "MohammedAshfakh"
 
                         git add .
+                        git commit -m "Update image tag to '${IMAGE_TAG}'" || true
 
-                        git commit -m "Update image tag to ${IMAGE_TAG}" || true
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/MohammedAshfakh/petclinic-CD.git
 
-                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/MohammedAshfakh/petclinic-CD.git HEAD:main
-                        """
+                        git push origin HEAD:main
+                        '''
                     }
                 }
             }
         }
+
     }
 
 
