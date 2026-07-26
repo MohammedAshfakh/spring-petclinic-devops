@@ -8,7 +8,7 @@ pipeline {
     environment {
         AWS_REGION = "us-east-1"
         ECR_URI = "799517508141.dkr.ecr.us-east-1.amazonaws.com/gitops-app"
-        SONAR_HOST_URL = "http://34.230.8.62:9000"
+        SONAR_HOST_URL = "http://174.129.191.201:9000"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
@@ -32,7 +32,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SonarQube Analysys') {
             steps {
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                     sh '''
