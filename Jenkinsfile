@@ -57,10 +57,6 @@ pipeline {
 
         stage('Push to ECR') {
             steps {
-                withCredentials([
-                    [$class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-creds']
-                ]) {
                     sh '''
                         aws ecr get-login-password --region $AWS_REGION | \
                         docker login --username AWS --password-stdin \
@@ -69,7 +65,7 @@ pipeline {
                         docker push ${ECR_URI}:${IMAGE_TAG}
                         docker push ${ECR_URI}:latest
                     '''
-                }
+                
             }
         }
 
