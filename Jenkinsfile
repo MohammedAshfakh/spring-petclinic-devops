@@ -50,7 +50,6 @@ pipeline {
                 sh '''
                     docker build -t petclinic:${IMAGE_TAG} .
                     docker tag petclinic:${IMAGE_TAG} ${ECR_URI}:${IMAGE_TAG}
-                    docker tag petclinic:${IMAGE_TAG} ${ECR_URI}:latest
                 '''
             }
         }
@@ -63,7 +62,6 @@ pipeline {
                         799517508141.dkr.ecr.us-east-1.amazonaws.com
 
                         docker push ${ECR_URI}:${IMAGE_TAG}
-                        docker push ${ECR_URI}:latest
                     '''
                 
             }
